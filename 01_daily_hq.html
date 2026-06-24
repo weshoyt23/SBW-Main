@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily HQ · SBW Co.</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f1ea;--paper:#fdfaf4;--dark:#1c1810;--border:#e2d9c8;
+  --amber:#c9740a;--al:#fef3c7;--ad:#7a4508;
+  --green:#1a6b47;--gl:#d1fae5;
+  --blue:#1d4ed8;--bl:#dbeafe;
+  --red:#b91c1c;--rl:#fee2e2;
+  --purple:#7c3aed;--pl:#ede9fe;
+  --teal:#0f766e;--tl:#ccfbf1;
+  --muted:#9c8f7e;--warm:#efe8da;--soft:#faf6ee;
+}
+body{background:var(--bg);color:var(--dark);font-family:'DM Sans',sans-serif;padding:0 0 40px}
+
+/* HEADER */
+.hdr{background:var(--dark);padding:14px 18px 10px;position:sticky;top:0;z-index:30}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.hdr-back{font-family:'DM Mono',monospace;font-size:10px;color:#6b5c46;text-decoration:none;display:flex;align-items:center;gap:4px;-webkit-tap-highlight-color:transparent}
+.hdr-center{text-align:center}
+.hdr-title{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--al);line-height:1}
+.hdr-title em{color:var(--amber);font-style:italic}
+.hdr-date{font-family:'DM Mono',monospace;font-size:9px;color:#6b5c46;margin-top:1px}
+.hdr-streak{display:flex;align-items:center;gap:4px;background:#2a1e0a;border:1px solid #3a2e1e;border-radius:20px;padding:4px 9px}
+.streak-num{font-family:'Fraunces',serif;font-size:14px;font-weight:900;color:var(--amber);line-height:1}
+.streak-lbl{font-family:'DM Mono',monospace;font-size:7px;color:#6b5c46;text-transform:uppercase;letter-spacing:.08em}
+.day-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:4px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.05em;margin-top:6px}
+.day-badge.barfino{background:rgba(15,118,110,.25);color:var(--tl);border:1px solid rgba(15,118,110,.4)}
+.day-badge.offday{background:rgba(212,130,12,.18);color:var(--al);border:1px solid rgba(212,130,12,.3)}
+.day-badge.restday{background:rgba(124,58,237,.15);color:#c4b5fd;border:1px solid rgba(124,58,237,.3)}
+.day-bar-wrap{background:#2a2010;border-radius:3px;height:3px;margin-bottom:9px}
+.day-bar{background:linear-gradient(90deg,var(--amber),#f59e0b);border-radius:3px;height:3px;transition:width .5s}
+.nav{display:flex;gap:3px;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-t{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.05em;padding:6px 10px;border-radius:4px;cursor:pointer;border:1px solid #3a2e1e;background:transparent;color:#6b5c46;white-space:nowrap;transition:all .15s;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+.nav-t.on{background:var(--amber);border-color:var(--amber);color:#1a1008;font-weight:600}
+
+/* PAGES */
+.pg{display:none;padding:14px 16px}
+.pg.on{display:block}
+.sec{font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px;margin-top:4px}
+
+/* NOW STRIP */
+.now-strip{background:var(--al);border:1px solid rgba(201,116,10,.3);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.now-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.now-label{font-family:'DM Mono',monospace;font-size:11px;color:var(--ad);flex:1}
+.now-time{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--amber)}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.stat{background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:11px}
+.stat-v{font-family:'Fraunces',serif;font-size:20px;font-weight:700;line-height:1}
+.stat-l{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px}
+
+/* TIME BLOCKS */
+.block{background:var(--paper);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px;transition:border-color .2s}
+.block.now{border-color:var(--amber)}
+.block-hdr{padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.block-time{font-family:'DM Mono',monospace;font-size:9px;color:white;background:var(--dark);padding:3px 8px;border-radius:3px;flex-shrink:0;min-width:68px;text-align:center}
+.block-name{flex:1;font-size:13px;font-weight:600;color:var(--dark)}
+.block-badge{font-family:'DM Mono',monospace;font-size:8px;padding:2px 7px;border-radius:3px;flex-shrink:0;letter-spacing:.05em;text-transform:uppercase}
+.block-chev{font-size:10px;color:var(--muted);flex-shrink:0;transition:transform .2s}
+.block.open .block-chev{transform:rotate(180deg)}
+.block-body{display:none;padding:0 14px 12px;border-top:1px solid var(--border)}
+.block.open .block-body{display:block}
+.bt{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid #f0e8da;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bt:last-child{border-bottom:none}
+.bt.done{opacity:.5}
+.bcheck{width:17px;height:17px;border-radius:4px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s}
+.bt.done .bcheck{background:var(--green);border-color:var(--green)}
+.bcheck-i{color:white;font-size:9px;display:none}
+.bt.done .bcheck-i{display:block}
+.bt-text{font-size:12px;color:var(--dark);line-height:1.4;flex:1}
+.bt.done .bt-text{text-decoration:line-through;color:var(--muted)}
+.bnote{font-size:11px;color:var(--muted);line-height:1.5;margin-top:8px;padding:7px 10px;background:var(--warm);border-radius:5px;font-style:italic}
+.earn{display:inline-flex;align-items:center;gap:4px;background:var(--gl);border:1px solid rgba(26,107,71,.2);border-radius:4px;padding:3px 8px;margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--green)}
+.peak-flag{background:#ccfbf1;border:1px solid rgba(15,118,110,.3);border-radius:4px;padding:3px 8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--teal);margin-top:8px;display:inline-block}
+
+/* SCHEDULE MODE TOGGLE */
+.mode-notice{background:var(--dark);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.mode-icon{font-size:18px;flex-shrink:0}
+.mode-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--al);flex:1}
+.mode-sub{font-size:11px;color:#6b5c46;margin-top:2px}
+
+/* TASKS */
+.cat{background:var(--paper);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.cat-hdr{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.cat-icon{font-size:17px;flex-shrink:0}
+.cat-name{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--dark);flex:1}
+.cat-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)}
+.cat-body{display:none;padding:0 14px 12px;border-top:1px solid var(--border)}
+.cat.open .cat-body{display:block}
+.task-item{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid #f0e8da;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.task-item:last-of-type{border-bottom:none}
+.task-item.done{opacity:.5}
+.task-item .bcheck{width:17px;height:17px;border-radius:4px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s}
+.task-item.done .bcheck{background:var(--green);border-color:var(--green)}
+.task-item.done .bcheck-i{display:block}
+.task-item.done .bt-text{text-decoration:line-through;color:var(--muted)}
+.task-del{background:none;border:none;color:#ccc;font-size:14px;cursor:pointer;padding:0 2px;flex-shrink:0;margin-top:1px;line-height:1;-webkit-tap-highlight-color:transparent}
+.add-row{display:flex;gap:7px;margin-top:10px}
+.add-inp{flex:1;background:var(--warm);border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--dark)}
+.add-inp:focus{outline:none;border-color:var(--amber)}
+.add-btn{background:var(--amber);color:white;border:none;border-radius:5px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+
+/* INCOME */
+.inc-card{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.inc-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.inc-row:last-child{border-bottom:none}
+.inc-l{font-size:12px;color:var(--dark);flex:1;font-weight:500}
+.inc-inp{background:var(--warm);border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-family:'DM Mono',monospace;font-size:12px;color:var(--dark);width:82px;text-align:right}
+.inc-inp:focus{outline:none;border-color:var(--amber)}
+.total-bar{background:var(--dark);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.total-lbl{font-family:'DM Mono',monospace;font-size:9px;color:#6b5c46;text-transform:uppercase;letter-spacing:.1em}
+.total-val{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--amber)}
+.tax-box{background:var(--rl);border:1px solid rgba(185,28,28,.2);border-radius:7px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:var(--red);line-height:1.5}
+.week-box{background:var(--paper);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.week-row{display:flex;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px}
+.week-row:last-child{border-bottom:none}
+.week-foot{padding:9px 12px;background:var(--warm);display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+
+/* BILLS */
+.bill-hero{background:var(--dark);border-radius:12px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
+.bill-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(212,130,12,.18) 0%,transparent 65%);pointer-events:none}
+.bill-total-target{font-family:'Fraunces',serif;font-size:38px;font-weight:900;color:var(--al);line-height:1}
+.bill-card{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.prog-wrap{background:var(--border);border-radius:5px;height:10px;overflow:hidden;margin:10px 0 6px}
+.prog{height:10px;border-radius:5px;transition:width .5s ease}
+.bill-input-row{display:flex;gap:7px;align-items:center;margin-top:10px}
+.bill-inp{flex:1;background:var(--warm);border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:'DM Mono',monospace;font-size:13px;color:var(--dark);text-align:right}
+.bill-inp:focus{outline:none;border-color:var(--amber)}
+.bill-btn-a{background:var(--amber);color:white;border:none;border-radius:5px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bill-btn-b{background:var(--blue);color:white;border:none;border-radius:5px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.done-banner{display:none;margin-top:8px;background:var(--gl);border:1px solid rgba(26,107,71,.3);border-radius:6px;padding:8px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);text-align:center;font-weight:600}
+.rent-info{background:#1a1610;border-radius:8px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#6b5c46;line-height:1.7}
+.rent-info strong{color:var(--al)}
+
+/* BRAND TAB */
+.brand-hero{background:var(--dark);border-radius:12px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
+.brand-hero::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(212,130,12,.15) 0%,transparent 65%);pointer-events:none}
+.brand-hero-label{font-family:'DM Mono',monospace;font-size:9px;color:#6b5c46;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
+.brand-hero-name{font-family:'Fraunces',serif;font-size:30px;font-weight:900;color:var(--al);line-height:1;margin-bottom:4px}
+.brand-hero-name em{color:var(--amber);font-style:italic}
+.brand-hero-sub{font-size:12px;color:#6b5c46;line-height:1.5}
+.ig-track{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.ig-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.ig-icon{font-size:24px;flex-shrink:0}
+.ig-meta{flex:1}
+.ig-count{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:var(--dark);line-height:1}
+.ig-lbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+.ig-input-row{display:flex;gap:7px}
+.ig-inp{flex:1;background:var(--warm);border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:'DM Mono',monospace;font-size:13px;color:var(--dark)}
+.ig-inp:focus{outline:none;border-color:var(--amber)}
+.ig-btn{background:var(--amber);color:white;border:none;border-radius:5px;padding:7px 14px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.ig-history{margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+.ig-hist-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0e8da;font-size:11px}
+.ig-hist-row:last-child{border-bottom:none}
+.milestone-card{background:var(--paper);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.milestone-hdr{padding:12px 14px;display:flex;align-items:center;gap:10px}
+.milestone-title{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--dark);flex:1}
+.milestone-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--amber)}
+.milestone-prog{height:4px;background:var(--border);margin:0 14px 0}
+.milestone-prog-fill{height:4px;background:linear-gradient(90deg,var(--amber),#f59e0b);border-radius:0 3px 3px 0;transition:width .5s}
+.milestone-body{padding:10px 14px 12px}
+.ms{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid #f0e8da;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ms:last-child{border-bottom:none}
+.ms.done .ms-text{text-decoration:line-through;color:var(--muted)}
+.ms.done{opacity:.6}
+.ms-check{width:17px;height:17px;border-radius:50%;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s}
+.ms.done .ms-check{background:var(--amber);border-color:var(--amber)}
+.ms-check-i{color:white;font-size:9px;display:none}
+.ms.done .ms-check-i{display:block}
+.ms-text{font-size:12px;color:var(--dark);line-height:1.4;flex:1}
+.drop-card{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.drop-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.drop-row:last-child{border-bottom:none}
+.drop-key{color:var(--muted);font-size:11px}
+.drop-inp{background:var(--warm);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--dark);width:140px;text-align:right}
+.drop-inp:focus{outline:none;border-color:var(--amber)}
+.win-item{background:var(--paper);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:7px}
+.win-date{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:3px}
+.win-text{font-size:12px;color:var(--dark);line-height:1.5}
+.win-input-row{display:flex;gap:7px;margin-bottom:12px}
+.win-inp{flex:1;background:var(--warm);border:1px solid var(--border);border-radius:5px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--dark)}
+.win-inp:focus{outline:none;border-color:var(--amber)}
+.win-btn{background:var(--amber);color:white;border:none;border-radius:5px;padding:8px 14px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+
+/* CLIENT TRACKER */
+.client-card{background:var(--paper);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.client-row{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border)}
+.client-row:last-child{border-bottom:none}
+.client-name{flex:1;font-size:13px;font-weight:600;color:var(--dark)}
+.client-detail{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.client-amt{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--green)}
+.client-status{font-family:'DM Mono',monospace;font-size:8px;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em}
+.cs-active{background:var(--gl);color:var(--green)}
+.cs-lead{background:var(--bl);color:var(--blue)}
+.cs-done{background:var(--warm);color:var(--muted)}
+.new-client-form{padding:10px 14px 12px;border-top:1px solid var(--border);background:var(--soft)}
+.form-row{display:flex;gap:6px;margin-bottom:6px}
+.f-inp{flex:1;background:var(--warm);border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--dark)}
+.f-inp:focus{outline:none;border-color:var(--amber)}
+.f-sel{background:var(--warm);border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--dark)}
+.f-btn{background:var(--amber);color:white;border:none;border-radius:5px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+
+/* NOTES */
+.notes-ta{width:100%;background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--dark);line-height:1.7;resize:vertical;min-height:130px}
+.notes-ta:focus{outline:none;border-color:var(--amber)}
+.notes-saved{font-family:'DM Mono',monospace;font-size:9px;color:var(--green);text-align:right;margin-top:4px;min-height:14px}
+.mantras{background:var(--dark);border-radius:10px;padding:16px;margin-top:14px}
+.mantra{font-family:'Fraunces',serif;font-size:13px;color:var(--al);font-style:italic;line-height:1.6;padding:10px 0;border-bottom:1px solid #2a2010}
+.mantra:last-child{border-bottom:none}
+
+/* BUTTONS */
+.save-btn{width:100%;background:var(--dark);color:var(--al);border:none;border-radius:7px;padding:12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;font-weight:600;cursor:pointer;margin-top:10px;-webkit-tap-highlight-color:transparent}
+.reset-btn{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:9px;font-family:'DM Mono',monospace;font-size:9px;cursor:pointer;margin-top:8px;-webkit-tap-highlight-color:transparent}
+.save-ok{text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);margin-top:5px;display:none}
+.footer{text-align:center;padding:20px 0 0;border-top:1px solid var(--border);margin-top:16px}
+.footer-b{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--border);font-style:italic}
+.footer-s{font-family:'DM Mono',monospace;font-size:8px;color:var(--border);margin-top:3px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-row">
+    <a href="index.html" class="hdr-back">← Home</a>
+    <div class="hdr-center">
+      <div class="hdr-title">Daily <em>HQ</em></div>
+      <div class="hdr-date" id="hdrDate">—</div>
+    </div>
+    <div class="hdr-streak">
+      <span style="font-size:13px">🔥</span>
+      <div>
+        <div class="streak-num" id="streakNum">0</div>
+        <div class="streak-lbl">day streak</div>
+      </div>
+    </div>
+  </div>
+  <div class="day-bar-wrap"><div class="day-bar" id="dayBar" style="width:0%"></div></div>
+  <div class="nav">
+    <div class="nav-t on" onclick="showPg('schedule',this)">⏰ Schedule</div>
+    <div class="nav-t" onclick="showPg('tasks',this)">✅ Tasks</div>
+    <div class="nav-t" onclick="showPg('brand',this)">🎨 SBW</div>
+    <div class="nav-t" onclick="showPg('freelance',this)">💼 Freelance</div>
+    <div class="nav-t" onclick="showPg('income',this)">💰 Income</div>
+    <div class="nav-t" onclick="showPg('bills',this)">🏠 Bills</div>
+    <div class="nav-t" onclick="showPg('notes',this)">📝 Notes</div>
+  </div>
+</div>
+
+<!-- ── SCHEDULE ── -->
+<div class="pg on" id="pg-schedule">
+  <div class="now-strip">
+    <div class="now-dot"></div>
+    <div class="now-label">Right now</div>
+    <div class="now-time" id="nowTime">—</div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat" style="border-left:3px solid var(--amber)"><div class="stat-v" id="s-earned" style="color:var(--amber)">$0</div><div class="stat-l">Today's Income</div></div>
+    <div class="stat" style="border-left:3px solid var(--green)"><div class="stat-v" id="s-pct" style="color:var(--green)">0%</div><div class="stat-l">Tasks Done</div></div>
+  </div>
+
+  <!-- Day-type notice -->
+  <div class="mode-notice" id="modeNotice">
+    <div class="mode-icon" id="modeIcon">⏰</div>
+    <div>
+      <div class="mode-label" id="modeLabel">Loading...</div>
+      <div class="mode-sub" id="modeSub"></div>
+    </div>
+  </div>
+
+  <div class="sec">Today's Schedule — Tap to Expand</div>
+
+  <!-- ── BAR FINO SCHEDULE (Thu/Fri/Sat) ── -->
+  <div id="sched-barfino" style="display:none">
+
+    <div class="block" id="bf0"><div class="block-hdr" onclick="tog('bf0')"><div class="block-time">8:00 AM</div><div class="block-name">Morning — SBW Design Block</div><div class="block-badge" style="background:var(--al);color:var(--amber)">SBW 🎨</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Open Adobe — work on current design or SBW project</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Post Instagram content or story for SBW</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Check Instagram — reply to comments and DMs</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Log any freelance hours or deliverables</div></div>
+      <div class="bnote">🎨 Peak creative window before the shift. Use it fully — phone on do not disturb.</div>
+    </div></div>
+
+    <div class="block" id="bf1"><div class="block-hdr" onclick="tog('bf1')"><div class="block-time">10:00 AM–12:00 PM</div><div class="block-name">Freelance / Business Dev</div><div class="block-badge" style="background:var(--bl);color:var(--blue)">💼 Freelance</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Work on active freelance project (C3 or current client)</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Cold outreach — email or DM 2 businesses offering design</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Check Fiverr messages or orders</div></div>
+      <div class="earn">💼 Aiming for $500–$1,000/project · 1+ jobs per month</div>
+    </div></div>
+
+    <div class="block" id="bf2"><div class="block-hdr" onclick="tog('bf2')"><div class="block-time">12:00–3:30 PM</div><div class="block-name">Rest & Shift Prep</div><div class="block-badge" style="background:#fce7f3;color:var(--purple)">Rest</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Eat a real meal — you'll be on your feet all night</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Rest, don't scroll — genuine downtime</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Light SBW if energy is there — mood boards, planning</div></div>
+      <div class="bnote">💤 Bar shifts are physically demanding. Rest now so you can be on your game tonight.</div>
+    </div></div>
+
+    <div class="block" id="bf3"><div class="block-hdr" onclick="tog('bf3')"><div class="block-time">3:30–4:45 PM</div><div class="block-name">Get Ready for Shift</div><div class="block-badge" style="background:var(--tl);color:var(--teal)">Bar Fino</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Shower and get dressed for shift</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Eat something light if needed</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Leave on time — be there a few minutes early</div></div>
+    </div></div>
+
+    <div class="block" id="bf4"><div class="block-hdr" onclick="tog('bf4')"><div class="block-time">5:00 PM – 1:00 AM</div><div class="block-name">Bar Fino Shift</div><div class="block-badge" style="background:var(--tl);color:var(--teal)">🍸 SHIFT</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Be present — great service = better tips</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Stay hydrated between tables</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Log tonight's earnings when you get home</div></div>
+      <div class="peak-flag">🍸 Thu/Fri/Sat nights are your primary income anchor right now</div>
+      <div class="earn">🍸 ~$150–$280 per shift (wages + tips)</div>
+    </div></div>
+
+    <div class="block" id="bf5"><div class="block-hdr" onclick="tog('bf5')"><div class="block-time">1:00–1:30 AM</div><div class="block-name">Wind Down</div><div class="block-badge" style="background:var(--bl);color:var(--blue)">Rest</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Log earnings in Income tab</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Drink water, eat something small</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Phone down — sleep before alarm</div></div>
+      <div class="bnote">🌙 Late nights are part of the deal. Protect sleep — tomorrow still matters.</div>
+    </div></div>
+
+  </div><!-- /barfino -->
+
+  <!-- ── OFF DAY SCHEDULE (Sun/Mon/Tue/Wed) ── -->
+  <div id="sched-offday" style="display:none">
+
+    <div class="block" id="od0"><div class="block-hdr" onclick="tog('od0')"><div class="block-time">8:00 AM</div><div class="block-name">Wake Up & Morning Reset</div><div class="block-badge" style="background:var(--gl);color:var(--green)">Morning</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Drink water before phone</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Check Instagram — reply to all comments and DMs</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Quick stretch — 10 minutes</div></div>
+    </div></div>
+
+    <div class="block" id="od1"><div class="block-hdr" onclick="tog('od1')"><div class="block-time">8:30–11:30 AM</div><div class="block-name">SBW Deep Work Block</div><div class="block-badge" style="background:var(--al);color:var(--amber)">SBW 🎨</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Open Adobe — work on current SBW design</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Post Instagram content — feed post or story</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Shopify store work — product pages, descriptions, photos</div></div>
+      <div class="bnote">🎨 These unscheduled days are where SBW actually gets built. Don't waste the morning.</div>
+    </div></div>
+
+    <div class="block" id="od2"><div class="block-hdr" onclick="tog('od2')"><div class="block-time">11:30 AM–1:00 PM</div><div class="block-name">Freelance / Business Outreach</div><div class="block-badge" style="background:var(--bl);color:var(--blue)">💼 Freelance</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Work on active client project (bill those hours)</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Cold outreach — email or DM 2–3 businesses today</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Follow up on any outstanding leads or proposals</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Check Fiverr — messages, orders, reviews</div></div>
+      <div class="earn">💼 Aiming for 1+ project/month · $500–$1,000+ each</div>
+    </div></div>
+
+    <div class="block" id="od3"><div class="block-hdr" onclick="tog('od3')"><div class="block-time">1:00–5:00 PM</div><div class="block-name">Lunch + Afternoon Free Block</div><div class="block-badge" style="background:#fce7f3;color:var(--purple)">Flex</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Eat a real lunch</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Rest, personal errands, or SBW planning</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Hydrate — especially if Uber Eats tonight</div></div>
+      <div class="bnote">☀️ Summer afternoons are brutal. Rest up. Uber Eats shift starts at 5:30.</div>
+    </div></div>
+
+    <div class="block" id="od4"><div class="block-hdr" onclick="tog('od4')"><div class="block-time">5:30–8:30 PM</div><div class="block-name">Uber Eats — Dinner Rush</div><div class="block-badge" style="background:#fef9c3;color:#92400e">🔥 PEAK</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Grab Lime scooter — open Uber Eats app</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Position near Congress / Guadalupe / 6th Street</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Cold water packed — accept stacked orders</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Wrap by 8:30pm — log earnings when home</div></div>
+      <div class="peak-flag">🛵 Dinner rush on your 4 off days — this covers the gap</div>
+      <div class="earn">🛵 ~$35–$55 per 3-hour session</div>
+    </div></div>
+
+    <div class="block" id="od5"><div class="block-hdr" onclick="tog('od5')"><div class="block-time">9:00 PM</div><div class="block-name">Evening SBW & Wind Down</div><div class="block-badge" style="background:var(--al);color:var(--amber)">SBW</div><div class="block-chev">▼</div></div><div class="block-body">
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Light SBW — content ideas, captions, planning</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Instagram engagement — reply and interact</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Write tomorrow's top 3 priorities</div></div>
+      <div class="bt" onclick="togT(this,event)"><div class="bcheck"><span class="bcheck-i">✓</span></div><div class="bt-text">Phone down by 10:30pm</div></div>
+    </div></div>
+
+  </div><!-- /offday -->
+
+  <div class="footer"><div class="footer-b">Daily HQ</div><div class="footer-s">Wesley · Austin TX</div></div>
+</div>
+
+<!-- ── TASKS ── -->
+<div class="pg" id="pg-tasks">
+  <div class="sec">Today's Priorities</div>
+
+  <div class="cat open" id="c-sbw">
+    <div class="cat-hdr" onclick="togC('c-sbw')"><div class="cat-icon">🎨</div><div class="cat-name">SBW Co.</div><div class="cat-count" id="cnt-sbw"></div></div>
+    <div class="cat-body" id="body-sbw"></div>
+  </div>
+
+  <div class="cat" id="c-freelance">
+    <div class="cat-hdr" onclick="togC('c-freelance')"><div class="cat-icon">💼</div><div class="cat-name">Freelance Design</div><div class="cat-count" id="cnt-freelance"></div></div>
+    <div class="cat-body" id="body-freelance"></div>
+  </div>
+
+  <div class="cat" id="c-barfino">
+    <div class="cat-hdr" onclick="togC('c-barfino')"><div class="cat-icon">🍸</div><div class="cat-name">Bar Fino</div><div class="cat-count" id="cnt-barfino"></div></div>
+    <div class="cat-body" id="body-barfino"></div>
+  </div>
+
+  <div class="cat" id="c-ue">
+    <div class="cat-hdr" onclick="togC('c-ue')"><div class="cat-icon">🛵</div><div class="cat-name">Uber Eats</div><div class="cat-count" id="cnt-ue"></div></div>
+    <div class="cat-body" id="body-ue"></div>
+  </div>
+
+  <div class="cat" id="c-personal">
+    <div class="cat-hdr" onclick="togC('c-personal')"><div class="cat-icon">🌿</div><div class="cat-name">Personal</div><div class="cat-count" id="cnt-personal"></div></div>
+    <div class="cat-body" id="body-personal"></div>
+  </div>
+
+  <button class="reset-btn" onclick="resetTasks()">↺ Reset all tasks for new day</button>
+  <div class="footer"><div class="footer-b">Tasks</div><div class="footer-s">Wesley · Austin TX</div></div>
+</div>
+
+<!-- ── BRAND ── -->
+<div class="pg" id="pg-brand">
+  <div class="brand-hero">
+    <div class="brand-hero-label">Your Brand</div>
+    <div class="brand-hero-name"><em>SBW</em> Co.</div>
+    <div class="brand-hero-sub">Premium graphic apparel · Austin, TX · Direct-to-consumer</div>
+  </div>
+
+  <div class="sec">Instagram Growth</div>
+  <div class="ig-track">
+    <div class="ig-top">
+      <div class="ig-icon">📸</div>
+      <div class="ig-meta">
+        <div class="ig-count" id="igCount">—</div>
+        <div class="ig-lbl">Followers</div>
+      </div>
+    </div>
+    <div class="ig-input-row">
+      <input class="ig-inp" type="number" id="igInp" placeholder="Current follower count">
+      <button class="ig-btn" onclick="logIG()">Update</button>
+    </div>
+    <div class="ig-history" id="igHistory" style="display:none"></div>
+  </div>
+
+  <div class="sec">Brand Milestones</div>
+  <div class="milestone-card">
+    <div class="milestone-hdr">
+      <div class="milestone-title">Launch Checklist</div>
+      <div class="milestone-pct" id="msPct">0%</div>
+    </div>
+    <div class="milestone-prog"><div class="milestone-prog-fill" id="msFill" style="width:0%"></div></div>
+    <div class="milestone-body" id="msBody"></div>
+  </div>
+
+  <div class="sec">Drop 1 Status</div>
+  <div class="drop-card">
+    <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--dark);margin-bottom:10px">Drop 1 — <span id="dropName">Unnamed</span></div>
+    <div class="drop-row"><div class="drop-key">Drop Name</div><input class="drop-inp" id="dropNameInp" placeholder="e.g. The Origin Drop" onchange="saveDrop()"></div>
+    <div class="drop-row"><div class="drop-key">Status</div>
+      <select class="drop-inp" id="dropStatus" onchange="saveDrop()" style="cursor:pointer">
+        <option value="design">In Design</option>
+        <option value="sample">Sampling</option>
+        <option value="launch">Pre-Launch</option>
+        <option value="live">Live 🟢</option>
+      </select>
+    </div>
+    <div class="drop-row"><div class="drop-key">Designs Complete</div><input class="drop-inp" type="number" id="dropDesigns" placeholder="0 of 5" onchange="saveDrop()"></div>
+    <div class="drop-row"><div class="drop-key">Units Sold</div><input class="drop-inp" type="number" id="dropSold" placeholder="0" onchange="saveDrop()"></div>
+    <div class="drop-row"><div class="drop-key">Revenue</div><input class="drop-inp" type="number" id="dropRev" placeholder="$0" onchange="saveDrop()"></div>
+    <div class="drop-row"><div class="drop-key">Target Date</div><input class="drop-inp" type="date" id="dropDate" onchange="saveDrop()"></div>
+  </div>
+
+  <div class="sec">Wins Log</div>
+  <div class="win-input-row">
+    <input class="win-inp" id="winInp" placeholder="Log a win — big or small..." onkeydown="if(event.key==='Enter')addWin()">
+    <button class="win-btn" onclick="addWin()">+ Win</button>
+  </div>
+  <div id="winsList"></div>
+
+  <div class="footer"><div class="footer-b">SBW Co.</div><div class="footer-s">Built in Austin · Drop by drop</div></div>
+</div>
+
+<!-- ── FREELANCE ── -->
+<div class="pg" id="pg-freelance">
+  <div class="sec">Active Clients & Leads</div>
+  <div class="client-card">
+    <div id="clientList"></div>
+    <div class="new-client-form">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Add Client / Lead</div>
+      <div class="form-row">
+        <input class="f-inp" id="cl-name" placeholder="Client name">
+        <input class="f-inp" id="cl-amt" placeholder="$0" type="number" style="max-width:80px">
+      </div>
+      <div class="form-row">
+        <input class="f-inp" id="cl-detail" placeholder="Project / notes">
+        <select class="f-sel" id="cl-status">
+          <option value="active">Active</option>
+          <option value="lead">Lead</option>
+          <option value="done">Done</option>
+        </select>
+        <button class="f-btn" onclick="addClient()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" style="margin-top:14px">Outreach Notes</div>
+  <textarea class="notes-ta" id="outreachTA" placeholder="Track outreach — who you contacted, follow-ups needed, pitches in progress..." style="min-height:110px"></textarea>
+  <div class="notes-saved" id="outreachStatus"></div>
+
+  <div style="background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px">Outreach Targets</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.8">
+      🎪 <strong style="color:var(--dark)">Festival / Event companies</strong> — C3 is the model. ACL, SXSW vendors, production companies<br>
+      🏪 <strong style="color:var(--dark)">Local Austin businesses</strong> — restaurants, boutiques, gyms, salons needing brand work<br>
+      🌐 <strong style="color:var(--dark)">Remote / non-local</strong> — cold email, Fiverr, LinkedIn, Instagram DMs<br>
+      🎨 <strong style="color:var(--dark)">Referrals</strong> — every finished job, ask for one name
+    </div>
+  </div>
+
+  <div class="footer"><div class="footer-b">Freelance</div><div class="footer-s">Wesley McDaniel · Graphic Design</div></div>
+</div>
+
+<!-- ── INCOME ── -->
+<div class="pg" id="pg-income">
+  <div class="sec">Log Today's Earnings</div>
+  <div class="inc-card">
+    <div class="inc-row"><div class="inc-l">🍸 Bar Fino — Tips + Wages</div><input class="inc-inp" type="number" id="i-bf" placeholder="$0" oninput="calcInc()"></div>
+    <div class="inc-row"><div class="inc-l">🛵 Uber Eats — Dinner</div><input class="inc-inp" type="number" id="i-ue" placeholder="$0" oninput="calcInc()"></div>
+    <div class="inc-row"><div class="inc-l">💼 Freelance Design</div><input class="inc-inp" type="number" id="i-fl" placeholder="$0" oninput="calcInc()"></div>
+    <div class="inc-row"><div class="inc-l">🛍️ SBW Sales</div><input class="inc-inp" type="number" id="i-sbw" placeholder="$0" oninput="calcInc()"></div>
+    <div class="inc-row"><div class="inc-l">📦 Other</div><input class="inc-inp" type="number" id="i-oth" placeholder="$0" oninput="calcInc()"></div>
+  </div>
+  <div class="total-bar"><div class="total-lbl">Today's Total</div><div class="total-val" id="incTotal">$0</div></div>
+  <div class="tax-box">💰 Transfer <strong id="taxAmt">$0</strong> (28%) to your Tax Fund today.</div>
+
+  <div class="sec" style="margin-top:14px">Weekly Running Total</div>
+  <div class="week-box">
+    <div id="weekRows"><div style="padding:14px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Save today's earnings to start tracking.</div></div>
+    <div class="week-foot"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em">Week Total</div><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--dark)" id="weekTot">$0</div></div>
+  </div>
+
+  <div style="background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px">Realistic Monthly Targets</div>
+    <div class="p-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><div><div style="font-weight:500">🍸 Bar Fino (Thu/Fri/Sat)</div><div style="font-size:10px;color:var(--muted)">12 shifts/month</div></div><div style="text-align:right"><div style="font-family:'DM Mono',monospace;font-weight:600;color:var(--teal)">$1,800–$3,360</div><div style="font-size:9px;color:var(--muted)">$150–$280/shift</div></div></div>
+    <div class="p-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><div><div style="font-weight:500">🛵 Uber Eats (Sun–Wed dinner)</div><div style="font-size:10px;color:var(--muted)">4 nights/week</div></div><div style="text-align:right"><div style="font-family:'DM Mono',monospace;font-weight:600;color:var(--amber)">$560–$880</div><div style="font-size:9px;color:var(--muted)">$35–$55/session</div></div></div>
+    <div class="p-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><div><div style="font-weight:500">💼 Freelance Design</div><div style="font-size:10px;color:var(--muted)">1–2 projects/month</div></div><div style="text-align:right"><div style="font-family:'DM Mono',monospace;font-weight:600;color:var(--blue)">$500–$1,500</div><div style="font-size:9px;color:var(--muted)">$35/hr · project-based</div></div></div>
+    <div class="p-row" style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px"><div><div style="font-weight:500">📊 Combined (realistic)</div></div><div style="text-align:right"><div style="font-family:'DM Mono',monospace;font-weight:600;color:var(--green)">$2,860–$5,740</div><div style="font-size:9px;color:var(--muted)">/month</div></div></div>
+  </div>
+
+  <button class="save-btn" onclick="saveInc()">💾 SAVE TODAY'S EARNINGS</button>
+  <div class="save-ok" id="incOk">✓ Saved!</div>
+  <button class="reset-btn" onclick="resetInc()">↺ Clear today's fields</button>
+  <div class="footer"><div class="footer-b">Income</div><div class="footer-s">Wesley · Austin TX</div></div>
+</div>
+
+<!-- ── BILLS ── -->
+<div class="pg" id="pg-bills">
+  <div class="bill-hero">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:#6b5c46;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px">Monthly Target</div>
+    <div class="bill-total-target" id="billTarget">$1,700</div>
+    <div style="font-size:12px;color:#6b5c46;margin-top:4px;line-height:1.5" id="billTargetSub">Rent $1,550 + Phone $150 (incl. $600 catch-up · Jul–Sep)</div>
+  </div>
+
+  <div class="rent-info">
+    <strong>Rent breakdown:</strong><br>
+    Base rent: $950/mo (your $1,850 − roommate's $900)<br>
+    Catch-up payment: +$600/mo for <strong>July · August · September</strong><br>
+    Effective rent Jul–Sep: <strong style="color:var(--amber)">$1,550</strong><br>
+    Effective rent after Sep: <strong style="color:var(--gl)">$950</strong>
+  </div>
+
+  <div class="bill-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="font-size:20px">🏠</div><div style="flex:1"><div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--dark)">Rent</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)" id="rentSubLabel">$1,550 / month</div></div><div style="text-align:right"><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--dark)" id="rentSaved">$0</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)" id="rentOfLabel">of $1,550</div></div></div>
+    <div class="prog-wrap"><div class="prog" id="rentBar" style="background:linear-gradient(90deg,var(--amber),#f59e0b);width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:10px"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber)" id="rentPct">0%</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)" id="rentLeft">$1,550 to go</div></div>
+    <div class="bill-input-row"><div style="font-size:12px;color:var(--muted);flex:1">Add saved:</div><input type="number" id="rentInp" placeholder="$0" class="bill-inp"><button class="bill-btn-a" onclick="addRent()">+ Add</button></div>
+    <div class="done-banner" id="rentDone">🎉 RENT COVERED!</div>
+  </div>
+
+  <div class="bill-card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="font-size:20px">📱</div><div style="flex:1"><div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--dark)">Phone Bill</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">$150 / month</div></div><div style="text-align:right"><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--dark)" id="phoneSaved">$0</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">of $150</div></div></div>
+    <div class="prog-wrap"><div class="prog" id="phoneBar" style="background:linear-gradient(90deg,var(--blue),#93c5fd);width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:10px"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--blue)" id="phonePct">0%</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)" id="phoneLeft">$150 to go</div></div>
+    <div class="bill-input-row"><div style="font-size:12px;color:var(--muted);flex:1">Add saved:</div><input type="number" id="phoneInp" placeholder="$0" class="bill-inp"><button class="bill-btn-b" onclick="addPhone()">+ Add</button></div>
+    <div class="done-banner" id="phoneDone">🎉 PHONE COVERED!</div>
+  </div>
+
+  <div style="background:var(--warm);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px">Combined Progress</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px">
+      <div><div style="font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--dark)" id="totSaved">$0</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">saved so far</div></div>
+      <div style="text-align:right"><div style="font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--muted)" id="totLeft">$1,700</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">remaining</div></div>
+    </div>
+    <div class="prog-wrap" style="height:14px"><div class="prog" id="totBar" style="background:linear-gradient(90deg,var(--green),#4ade80);width:0%;height:14px"></div></div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);text-align:center;margin-top:5px" id="totPct">0% of monthly bills covered</div>
+  </div>
+
+  <button class="reset-btn" onclick="resetBills()">↺ Reset bills for new month</button>
+  <div class="footer"><div class="footer-b">Bills</div><div class="footer-s">~$1,700/mo Jul–Sep · $1,100/mo after · Wesley · Austin TX</div></div>
+</div>
+
+<!-- ── NOTES ── -->
+<div class="pg" id="pg-notes">
+  <div class="sec">Today's Notes</div>
+  <textarea class="notes-ta" id="notesTA" placeholder="What's on your mind? Ideas, wins, reflections, anything..."></textarea>
+  <div class="notes-saved" id="notesStatus"></div>
+  <div class="mantras">
+    <div class="mantra">"The question isn't whether anyone will buy. Someone will. The question is whether you'll stay consistent long enough to find the people who were always going to love what you make."</div>
+    <div class="mantra">"Every Bar Fino shift funds the brand. Every freelance job proves the skill. Every SBW post is a brick."</div>
+    <div class="mantra">"Rest is not laziness. Burnout costs more than any slow day ever will."</div>
+    <div class="mantra">"C3 Presentations chose you for a reason. Keep showing up and the referrals follow."</div>
+  </div>
+  <div class="footer" style="margin-top:14px"><div class="footer-b">Notes</div><div class="footer-s">Wesley · Austin TX</div></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DAY TYPE  (0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat)
+// ─────────────────────────────────────────────
+function getDayType(){
+  const d=new Date().getDay();
+  if(d===0)return'rest'; // Sunday — recovery after Sat shift
+  if(d>=4)return'barfino'; // Thu Fri Sat
+  return'offday'; // Mon Tue Wed
+}
+
+// ─────────────────────────────────────────────
+// STREAK
+// ─────────────────────────────────────────────
+function updStreak(){
+  const today=new Date().toDateString();
+  const yesterday=new Date(Date.now()-864e5).toDateString();
+  const s=JSON.parse(localStorage.getItem('hq_streak')||'{"count":0,"last":""}');
+  if(s.last!==today){
+    s.count=s.last===yesterday?s.count+1:1;
+    s.last=today;
+    localStorage.setItem('hq_streak',JSON.stringify(s));
+  }
+  document.getElementById('streakNum').textContent=s.count;
+}
+
+// ─────────────────────────────────────────────
+// NAV
+// ─────────────────────────────────────────────
+function showPg(id,btn){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-t').forEach(t=>t.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+  updAllCounts();
+}
+
+// ─────────────────────────────────────────────
+// TIME + SCHEDULE MODE
+// ─────────────────────────────────────────────
+function tick(){
+  const n=new Date();
+  const h=n.getHours(),m=n.getMinutes();
+  const ts=(h%12||12)+':'+(m<10?'0':'')+m+(h>=12?'pm':'am');
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('nowTime').textContent=ts;
+  document.getElementById('hdrDate').textContent=days[n.getDay()]+' · '+months[n.getMonth()]+' '+n.getDate();
+  const start=7*60,end=23*60,cur=h*60+m;
+  const pct=Math.max(0,Math.min(100,(cur-start)/(end-start)*100));
+  document.getElementById('dayBar').style.width=pct+'%';
+
+  const type=getDayType();
+  const notice=document.getElementById('modeNotice');
+  const icon=document.getElementById('modeIcon');
+  const label=document.getElementById('modeLabel');
+  const sub=document.getElementById('modeSub');
+
+  document.getElementById('sched-barfino').style.display=type==='barfino'?'block':'none';
+  document.getElementById('sched-offday').style.display=type!=='barfino'?'block':'none';
+
+  if(type==='barfino'){
+    notice.style.background='rgba(15,118,110,.12)';notice.style.border='1px solid rgba(15,118,110,.3)';
+    icon.textContent='🍸';
+    label.style.color='var(--tl)';label.textContent='Bar Fino Night — Shift starts 5:00 PM';
+    sub.textContent='Morning is yours: SBW design + freelance before the shift.';
+    // highlight bar fino blocks
+    const bfBlocks=[{id:'bf0',s:8*60,e:10*60},{id:'bf1',s:10*60,e:12*60},{id:'bf2',s:12*60,e:15*60+30},{id:'bf3',s:15*60+30,e:17*60},{id:'bf4',s:17*60,e:25*60},{id:'bf5',s:25*60,e:26*60}];
+    bfBlocks.forEach(b=>{
+      const el=document.getElementById(b.id);if(!el)return;
+      if(cur>=b.s&&cur<b.e){el.classList.add('now');if(!el.classList.contains('open'))el.classList.add('open');}
+      else el.classList.remove('now');
+    });
+  } else if(type==='rest'){
+    notice.style.background='rgba(124,58,237,.08)';notice.style.border='1px solid rgba(124,58,237,.25)';
+    icon.textContent='😴';
+    label.style.color='#c4b5fd';label.textContent='Sunday — Rest & Recovery';
+    sub.textContent='You worked Sat night. Rest is productive. SBW when ready.';
+  } else {
+    notice.style.background='rgba(201,116,10,.08)';notice.style.border='1px solid rgba(201,116,10,.25)';
+    icon.textContent='🛵';
+    label.style.color='var(--al)';label.textContent='Off Night — SBW day + Uber Eats dinner shift';
+    sub.textContent='No Bar Fino tonight. Full day for SBW, freelance, and dinner rush (5:30–8:30pm).';
+    const odBlocks=[{id:'od0',s:8*60,e:8*60+30},{id:'od1',s:8*60+30,e:11*60+30},{id:'od2',s:11*60+30,e:13*60},{id:'od3',s:13*60,e:17*60},{id:'od4',s:17*60+30,e:20*60+30},{id:'od5',s:21*60,e:23*60}];
+    odBlocks.forEach(b=>{
+      const el=document.getElementById(b.id);if(!el)return;
+      if(cur>=b.s&&cur<b.e){el.classList.add('now');if(!el.classList.contains('open'))el.classList.add('open');}
+      else el.classList.remove('now');
+    });
+  }
+}
+tick();setInterval(tick,30000);
+
+function tog(id){document.getElementById(id).classList.toggle('open')}
+function togT(el,e){if(e)e.stopPropagation();el.classList.toggle('done');}
+
+// ─────────────────────────────────────────────
+// TASKS
+// ─────────────────────────────────────────────
+const TASK_DEFAULTS={
+  sbw:[
+    'Work on active SBW design in Adobe',
+    'Post Instagram content — feed or story',
+    'Reply to all Instagram comments and DMs',
+    'Shopify store update (product pages, photos, copy)'
+  ],
+  freelance:[
+    'Work on active client project — log hours',
+    'Cold outreach — email or DM 2–3 businesses',
+    'Follow up on outstanding leads or proposals',
+    'Check Fiverr — messages, orders, reviews',
+    'Update client tracker in Brand tab'
+  ],
+  barfino:[
+    'Be at Bar Fino on time (shifts: Thu/Fri/Sat 5pm)',
+    'Log tonight\'s earnings when home'
+  ],
+  ue:[
+    'Dinner rush completed (5:30–8:30pm)',
+    'Log Uber Eats earnings in Income tab'
+  ],
+  personal:[
+    '3 meals eaten today',
+    'Hydrated — especially after Uber Eats shift',
+    'At least one genuine rest period'
+  ]
+};
+
+const CAT_MAP=[
+  {id:'c-sbw',key:'sbw',bodyId:'body-sbw',cntId:'cnt-sbw'},
+  {id:'c-freelance',key:'freelance',bodyId:'body-freelance',cntId:'cnt-freelance'},
+  {id:'c-barfino',key:'barfino',bodyId:'body-barfino',cntId:'cnt-barfino'},
+  {id:'c-ue',key:'ue',bodyId:'body-ue',cntId:'cnt-ue'},
+  {id:'c-personal',key:'personal',bodyId:'body-personal',cntId:'cnt-personal'}
+];
+
+function getTaskKey(){return'hq_tasks3_'+new Date().toDateString();}
+function loadTaskData(){
+  const raw=localStorage.getItem(getTaskKey());
+  if(raw)return JSON.parse(raw);
+  const d={};
+  Object.keys(TASK_DEFAULTS).forEach(k=>{d[k]=TASK_DEFAULTS[k].map(t=>({text:t,done:false}));});
+  return d;
+}
+function saveTaskData(d){localStorage.setItem(getTaskKey(),JSON.stringify(d));}
+
+function renderTasks(){
+  const d=loadTaskData();
+  CAT_MAP.forEach(({key,bodyId,cntId})=>{
+    const body=document.getElementById(bodyId);if(!body)return;
+    const tasks=d[key]||[];
+    let html='';
+    tasks.forEach((t,i)=>{
+      html+=`<div class="task-item${t.done?' done':''}" onclick="toggleTask('${key}',${i})">
+        <div class="bcheck"><span class="bcheck-i">✓</span></div>
+        <div class="bt-text">${escHtml(t.text)}</div>
+        <button class="task-del" onclick="delTask(event,'${key}',${i})">×</button>
+      </div>`;
+    });
+    html+=`<div class="add-row">
+      <input class="add-inp" id="inp-${key}" placeholder="Add task..." onkeydown="if(event.key==='Enter')addTask('${key}')">
+      <button class="add-btn" onclick="addTask('${key}')">+ Add</button>
+    </div>`;
+    body.innerHTML=html;
+    const done=tasks.filter(t=>t.done).length;
+    const cntEl=document.getElementById(cntId);if(cntEl)cntEl.textContent=done+'/'+tasks.length;
+  });
+  updTaskStats();
+}
+
+function toggleTask(key,idx){const d=loadTaskData();d[key][idx].done=!d[key][idx].done;saveTaskData(d);renderTasks();}
+function delTask(e,key,idx){e.stopPropagation();const d=loadTaskData();d[key].splice(idx,1);saveTaskData(d);renderTasks();}
+function addTask(key){
+  const inp=document.getElementById('inp-'+key);
+  const txt=inp.value.trim();if(!txt)return;
+  const d=loadTaskData();if(!d[key])d[key]=[];
+  d[key].push({text:txt,done:false});
+  saveTaskData(d);renderTasks();
+  setTimeout(()=>{const el=document.getElementById('inp-'+key);if(el)el.focus();},50);
+}
+function updAllCounts(){
+  const d=loadTaskData();
+  CAT_MAP.forEach(({key,cntId})=>{
+    const tasks=d[key]||[];
+    const done=tasks.filter(t=>t.done).length;
+    const el=document.getElementById(cntId);if(el)el.textContent=done+'/'+tasks.length;
+  });
+  updTaskStats();
+}
+function updTaskStats(){
+  const d=loadTaskData();let total=0,done=0;
+  Object.values(d).forEach(arr=>{total+=arr.length;done+=arr.filter(t=>t.done).length;});
+  const pct=total?Math.round(done/total*100):0;
+  const el=document.getElementById('s-pct');if(el)el.textContent=pct+'%';
+}
+function togC(id){document.getElementById(id).classList.toggle('open')}
+function resetTasks(){if(!confirm('Reset all tasks for a new day?'))return;localStorage.removeItem(getTaskKey());renderTasks();}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ─────────────────────────────────────────────
+// INCOME
+// ─────────────────────────────────────────────
+const INC_IDS=['i-bf','i-ue','i-fl','i-sbw','i-oth'];
+function calcInc(){
+  const tot=INC_IDS.reduce((s,id)=>s+(parseFloat(document.getElementById(id).value)||0),0);
+  document.getElementById('incTotal').textContent='$'+tot.toFixed(2);
+  document.getElementById('taxAmt').textContent='$'+(tot*.28).toFixed(2);
+  document.getElementById('s-earned').textContent='$'+tot.toFixed(0);
+}
+function loadTodayInc(){
+  const key='hq_inc_'+new Date().toDateString();
+  const saved=localStorage.getItem(key);if(!saved)return;
+  const data=JSON.parse(saved);
+  INC_IDS.forEach(id=>{if(data[id])document.getElementById(id).value=data[id];});
+  calcInc();
+}
+function saveInc(){
+  const data={};INC_IDS.forEach(id=>data[id]=document.getElementById(id).value||'0');
+  data.total=document.getElementById('incTotal').textContent;data.date=new Date().toDateString();
+  localStorage.setItem('hq_inc_'+data.date,JSON.stringify(data));
+  const w=JSON.parse(localStorage.getItem('hq_weekly')||'[]');
+  const ex=w.findIndex(d=>d.date===data.date);
+  if(ex>=0)w[ex]=data;else w.push(data);
+  localStorage.setItem('hq_weekly',JSON.stringify(w.slice(-7)));
+  buildWeek(w.slice(-7));
+  const ok=document.getElementById('incOk');ok.style.display='block';setTimeout(()=>ok.style.display='none',2500);
+}
+function buildWeek(w){
+  if(!w||!w.length)return;
+  const c=document.getElementById('weekRows');let html='';let tot=0;
+  w.forEach(d=>{const t=parseFloat((d.total||'$0').replace('$',''))||0;tot+=t;html+=`<div class="week-row"><div style="color:var(--muted)">${d.date}</div><div style="font-family:'DM Mono',monospace;font-weight:600">${d.total||'$0'}</div></div>`;});
+  c.innerHTML=html;document.getElementById('weekTot').textContent='$'+tot.toFixed(2);
+}
+function resetInc(){INC_IDS.forEach(id=>document.getElementById(id).value='');calcInc();}
+
+// ─────────────────────────────────────────────
+// BILLS — dynamic rent based on month
+// ─────────────────────────────────────────────
+function getRentTarget(){
+  const m=new Date().getMonth()+1; // 1-12
+  // July=7, Aug=8, Sep=9 have the $600 catch-up
+  return[7,8,9].includes(m)?1550:950;
+}
+const PHONE=150;
+function getBills(){const m=new Date().toISOString().slice(0,7);return JSON.parse(localStorage.getItem('hq_bills_'+m)||'{"rent":0,"phone":0}');}
+function saveBills(d){const m=new Date().toISOString().slice(0,7);localStorage.setItem('hq_bills_'+m,JSON.stringify(d));}
+function updBills(){
+  const RENT=getRentTarget();
+  const TOTAL_TARGET=RENT+PHONE;
+  // update UI labels
+  document.getElementById('billTarget').textContent='$'+TOTAL_TARGET.toLocaleString();
+  const isCatchup=[7,8,9].includes(new Date().getMonth()+1);
+  document.getElementById('billTargetSub').textContent=isCatchup
+    ?'Rent $'+RENT+' (base $950 + $600 catch-up) + Phone $150'
+    :'Rent $'+RENT+' + Phone $150';
+  document.getElementById('rentSubLabel').textContent='$'+RENT+' / month';
+  document.getElementById('rentOfLabel').textContent='of $'+RENT;
+
+  const b=getBills();
+  const r=Math.min(b.rent,RENT),p=Math.min(b.phone,PHONE);
+  const rp=Math.min(100,r/RENT*100),pp=Math.min(100,p/PHONE*100);
+  document.getElementById('rentSaved').textContent='$'+b.rent.toFixed(0);
+  document.getElementById('rentBar').style.width=rp+'%';
+  document.getElementById('rentPct').textContent=rp.toFixed(0)+'%';
+  document.getElementById('rentLeft').textContent=b.rent>=RENT?'✓ Covered!':'$'+(RENT-b.rent).toFixed(0)+' to go';
+  document.getElementById('rentDone').style.display=b.rent>=RENT?'block':'none';
+  document.getElementById('phoneSaved').textContent='$'+b.phone.toFixed(0);
+  document.getElementById('phoneBar').style.width=pp+'%';
+  document.getElementById('phonePct').textContent=pp.toFixed(0)+'%';
+  document.getElementById('phoneLeft').textContent=b.phone>=PHONE?'✓ Covered!':'$'+(PHONE-b.phone).toFixed(0)+' to go';
+  document.getElementById('phoneDone').style.display=b.phone>=PHONE?'block':'none';
+  const tot=r+p,tp=Math.min(100,tot/TOTAL_TARGET*100);
+  document.getElementById('totSaved').textContent='$'+tot.toFixed(0);
+  document.getElementById('totLeft').textContent=tot>=TOTAL_TARGET?'$0':'$'+(TOTAL_TARGET-tot).toFixed(0);
+  document.getElementById('totBar').style.width=tp+'%';
+  document.getElementById('totPct').textContent=tp.toFixed(0)+'% of monthly bills covered'+(tp>=100?' 🎉':'');
+}
+function addRent(){const v=parseFloat(document.getElementById('rentInp').value)||0;if(v<=0)return;const b=getBills();b.rent=(b.rent||0)+v;saveBills(b);document.getElementById('rentInp').value='';updBills();}
+function addPhone(){const v=parseFloat(document.getElementById('phoneInp').value)||0;if(v<=0)return;const b=getBills();b.phone=(b.phone||0)+v;saveBills(b);document.getElementById('phoneInp').value='';updBills();}
+function resetBills(){if(!confirm('Reset bills for new month?'))return;const m=new Date().toISOString().slice(0,7);localStorage.removeItem('hq_bills_'+m);updBills();}
+
+// ─────────────────────────────────────────────
+// BRAND — Instagram
+// ─────────────────────────────────────────────
+function logIG(){
+  const val=parseInt(document.getElementById('igInp').value);if(!val||val<0)return;
+  const history=JSON.parse(localStorage.getItem('hq_ig')||'[]');
+  const today=new Date().toDateString();
+  const last=history[history.length-1];
+  if(last&&last.date===today)history[history.length-1].count=val;
+  else history.push({date:today,count:val});
+  localStorage.setItem('hq_ig',JSON.stringify(history));
+  document.getElementById('igInp').value='';renderIG();
+}
+function renderIG(){
+  const history=JSON.parse(localStorage.getItem('hq_ig')||'[]');
+  const latest=history[history.length-1];
+  const prev=history[history.length-2];
+  const countEl=document.getElementById('igCount');
+  if(latest){
+    let html=latest.count.toLocaleString();
+    if(prev){const diff=latest.count-prev.count;const sign=diff>=0?'+':'';html+=` <span style="font-size:13px;font-family:'DM Mono',monospace;color:${diff>=0?'var(--green)':'var(--red)'}">${sign}${diff}</span>`;}
+    countEl.innerHTML=html;
+  } else countEl.textContent='—';
+  const histEl=document.getElementById('igHistory');
+  if(history.length<=1){histEl.style.display='none';return;}
+  histEl.style.display='block';
+  const last5=history.slice(-5).reverse();
+  histEl.innerHTML='<div style="font-family:\'DM Mono\',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Recent</div>'+
+    last5.map((h,i)=>{const next=last5[i+1];const diff=next?h.count-next.count:null;const ds=diff!==null?` <span style="color:${diff>=0?'var(--green)':'var(--red)'}">${diff>=0?'+':''}${diff}</span>`:'';return`<div class="ig-hist-row"><span style="color:var(--muted)">${h.date}</span><span style="font-family:'DM Mono',monospace;font-weight:600">${h.count.toLocaleString()}${ds}</span></div>`;}).join('');
+}
+
+// ─────────────────────────────────────────────
+// BRAND — Milestones
+// ─────────────────────────────────────────────
+const MILESTONES=[
+  'Brand name + logo finalized',
+  'Instagram account created and bio set',
+  'First 5 design concepts drafted',
+  'Drop 1 designs finalized (5 designs)',
+  'Shopify store created',
+  'Product pages live on Shopify',
+  'First product sample ordered',
+  'Heat press set up and tested',
+  'First 10 Instagram posts published',
+  'Reached 100 Instagram followers',
+  'Reached 500 Instagram followers',
+  'Drop 1 announced publicly',
+  'Drop 1 launched — store live',
+  'First sale made',
+  'First 5-star review received',
+  '10 units sold',
+  '25 units sold',
+  'Reached 1,000 Instagram followers',
+  'First repeat customer',
+  'Drop 2 begun'
+];
+function getMilestones(){return JSON.parse(localStorage.getItem('hq_milestones')||'[]');}
+function saveMilestones(d){localStorage.setItem('hq_milestones',JSON.stringify(d));}
+function renderMilestones(){
+  const done=getMilestones();
+  const total=MILESTONES.length,doneCount=MILESTONES.filter((_,i)=>done.includes(i)).length;
+  const pct=Math.round(doneCount/total*100);
+  document.getElementById('msPct').textContent=pct+'%';
+  document.getElementById('msFill').style.width=pct+'%';
+  document.getElementById('msBody').innerHTML=MILESTONES.map((m,i)=>`
+    <div class="ms${done.includes(i)?' done':''}" onclick="toggleMS(${i})">
+      <div class="ms-check"><span class="ms-check-i">✓</span></div>
+      <div class="ms-text">${m}</div>
+    </div>`).join('');
+}
+function toggleMS(idx){const done=getMilestones();const pos=done.indexOf(idx);if(pos>=0)done.splice(pos,1);else done.push(idx);saveMilestones(done);renderMilestones();}
+
+// ─────────────────────────────────────────────
+// BRAND — Drop tracker
+// ─────────────────────────────────────────────
+function loadDrop(){
+  const d=JSON.parse(localStorage.getItem('hq_drop1')||'{}');
+  if(d.name){document.getElementById('dropNameInp').value=d.name;document.getElementById('dropName').textContent=d.name;}
+  if(d.status)document.getElementById('dropStatus').value=d.status;
+  if(d.designs)document.getElementById('dropDesigns').value=d.designs;
+  if(d.sold)document.getElementById('dropSold').value=d.sold;
+  if(d.rev)document.getElementById('dropRev').value=d.rev;
+  if(d.date)document.getElementById('dropDate').value=d.date;
+}
+function saveDrop(){
+  const d={name:document.getElementById('dropNameInp').value,status:document.getElementById('dropStatus').value,designs:document.getElementById('dropDesigns').value,sold:document.getElementById('dropSold').value,rev:document.getElementById('dropRev').value,date:document.getElementById('dropDate').value};
+  document.getElementById('dropName').textContent=d.name||'Unnamed';
+  localStorage.setItem('hq_drop1',JSON.stringify(d));
+}
+
+// ─────────────────────────────────────────────
+// BRAND — Freelance Client Tracker
+// ─────────────────────────────────────────────
+const CLIENT_SEED=[{name:'C3 Presentations',detail:'Event/festival design · ongoing',amt:700,status:'active'}];
+function getClients(){
+  const raw=localStorage.getItem('hq_clients');
+  if(raw)return JSON.parse(raw);
+  localStorage.setItem('hq_clients',JSON.stringify(CLIENT_SEED));
+  return CLIENT_SEED;
+}
+function saveClients(c){localStorage.setItem('hq_clients',JSON.stringify(c));}
+function renderClients(){
+  const clients=getClients();
+  const statusMap={active:'cs-active',lead:'cs-lead',done:'cs-done'};
+  const statusLabel={active:'Active',lead:'Lead',done:'Done'};
+  document.getElementById('clientList').innerHTML=clients.map((c,i)=>`
+    <div class="client-row">
+      <div>
+        <div class="client-name">${escHtml(c.name)}</div>
+        <div class="client-detail">${escHtml(c.detail)}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="client-amt">$${Number(c.amt||0).toLocaleString()}</div>
+        <div style="display:flex;align-items:center;gap:5px;justify-content:flex-end;margin-top:3px">
+          <span class="client-status ${statusMap[c.status]||'cs-lead'}">${statusLabel[c.status]||'Lead'}</span>
+          <button onclick="delClient(${i})" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:13px;padding:0;line-height:1">×</button>
+        </div>
+      </div>
+    </div>`).join('');
+  const totalEl=document.getElementById('clientTotal');
+  if(totalEl){const tot=clients.reduce((s,c)=>s+Number(c.amt||0),0);totalEl.textContent='$'+tot.toLocaleString();}
+}
+function addClient(){
+  const name=document.getElementById('cl-name').value.trim();if(!name)return;
+  const clients=getClients();
+  clients.push({name,detail:document.getElementById('cl-detail').value.trim(),amt:parseFloat(document.getElementById('cl-amt').value)||0,status:document.getElementById('cl-status').value});
+  saveClients(clients);
+  document.getElementById('cl-name').value='';document.getElementById('cl-detail').value='';document.getElementById('cl-amt').value='';
+  renderClients();
+}
+function delClient(idx){const clients=getClients();clients.splice(idx,1);saveClients(clients);renderClients();}
+
+// ─────────────────────────────────────────────
+// BRAND — Wins Log
+// ─────────────────────────────────────────────
+function getWins(){return JSON.parse(localStorage.getItem('hq_wins')||'[]');}
+function addWin(){
+  const inp=document.getElementById('winInp');const txt=inp.value.trim();if(!txt)return;
+  const wins=getWins();
+  wins.unshift({text:txt,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+  localStorage.setItem('hq_wins',JSON.stringify(wins));inp.value='';renderWins();
+}
+function renderWins(){
+  const wins=getWins();const el=document.getElementById('winsList');
+  if(!wins.length){el.innerHTML='<div style="text-align:center;font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);padding:16px 0">Log your first win.</div>';return;}
+  el.innerHTML=wins.map((w,i)=>`<div class="win-item"><div class="win-date">${w.date} <span onclick="delWin(${i})" style="cursor:pointer;color:var(--muted);float:right">×</span></div><div class="win-text">${escHtml(w.text)}</div></div>`).join('');
+}
+function delWin(idx){const wins=getWins();wins.splice(idx,1);localStorage.setItem('hq_wins',JSON.stringify(wins));renderWins();}
+
+// ─────────────────────────────────────────────
+// NOTES — auto-save
+// ─────────────────────────────────────────────
+let notesSaveTimer=null;
+function loadNotes(){const s=localStorage.getItem('hq_notes_'+new Date().toDateString());if(s)document.getElementById('notesTA').value=s;}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  updStreak();
+  renderTasks();
+  loadNotes();
+  loadTodayInc();
+  updBills();
+  renderIG();
+  renderMilestones();
+  loadDrop();
+  renderClients();
+  renderWins();
+  const w=JSON.parse(localStorage.getItem('hq_weekly')||'[]');if(w.length)buildWeek(w);
+
+  document.getElementById('notesTA').addEventListener('input',()=>{
+    clearTimeout(notesSaveTimer);
+    notesSaveTimer=setTimeout(()=>{
+      localStorage.setItem('hq_notes_'+new Date().toDateString(),document.getElementById('notesTA').value);
+      const st=document.getElementById('notesStatus');st.textContent='✓ Saved';setTimeout(()=>st.textContent='',2000);
+    },800);
+  });
+
+  const outreachSaved=localStorage.getItem('hq_outreach');
+  if(outreachSaved)document.getElementById('outreachTA').value=outreachSaved;
+  let outreachTimer=null;
+  document.getElementById('outreachTA').addEventListener('input',()=>{
+    clearTimeout(outreachTimer);
+    outreachTimer=setTimeout(()=>{
+      localStorage.setItem('hq_outreach',document.getElementById('outreachTA').value);
+      const st=document.getElementById('outreachStatus');st.textContent='✓ Saved';setTimeout(()=>st.textContent='',2000);
+    },800);
+  });
+});
+</script>
+</body>
+</html>

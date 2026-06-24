@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<!-- saved from url=(0064)file:///Users/wesleymcdaniel/Downloads/sbw_character_system.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>SBW Co. — Character System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=Archivo:wght@400;500;600&display=swap');
+
+  :root {
+    --charcoal: #2B2622;
+    --mustard: #C4842A;
+    --cream: #F1EADD;
+    --vermillion: #E8531F;
+    --teal: #0E8A7D;
+    --plum: #B23D7C;
+    --olive: #9AA62A;
+    --pink: #E8758C;
+    --card-bg: #ffffff;
+    --border: rgba(43,38,34,0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Archivo', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .wrap { max-width: 980px; margin: 0 auto; }
+
+  header {
+    margin-bottom: 2rem;
+  }
+
+  .brand-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 38px;
+    margin: 0 0 4px;
+    font-optical-sizing: auto;
+  }
+
+  .brand-sub {
+    font-size: 14px;
+    color: var(--mustard);
+    letter-spacing: 0.02em;
+  }
+
+  .philosophy {
+    background: var(--charcoal);
+    color: var(--cream);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    margin: 1.5rem 0 2rem;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .philosophy b { color: var(--mustard); font-weight: 600; }
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .toolbar h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0;
+  }
+
+  button {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    border: 1.5px solid var(--charcoal);
+    background: transparent;
+    color: var(--charcoal);
+    padding: 9px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  button:hover { background: var(--charcoal); color: var(--cream); }
+
+  button.primary {
+    background: var(--charcoal);
+    color: var(--cream);
+  }
+  button.primary:hover { background: var(--mustard); border-color: var(--mustard); color: var(--charcoal); }
+
+  button.danger { border-color: var(--vermillion); color: var(--vermillion); }
+  button.danger:hover { background: var(--vermillion); color: white; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-img {
+    width: 100%;
+    height: 220px;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-img.empty {
+    font-size: 12px;
+    color: var(--mustard);
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card-body {
+    padding: 1.1rem 1.25rem 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-num {
+    font-size: 11px;
+    color: var(--mustard);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .card-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin: 2px 0 4px;
+  }
+
+  .card-archetype {
+    font-size: 12px;
+    color: var(--mustard);
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #4a443d;
+    margin-bottom: 12px;
+    flex: 1;
+  }
+
+  .traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .trait-tag {
+    font-size: 11px;
+    background: var(--cream);
+    color: var(--charcoal);
+    padding: 3px 9px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .card-actions button {
+    flex: 1;
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+
+  .add-card {
+    border: 1.5px dashed var(--mustard);
+    background: transparent;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+    cursor: pointer;
+    color: var(--mustard);
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    transition: background 0.15s;
+  }
+
+  .add-card:hover { background: rgba(196,132,42,0.08); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(43,38,34,0.55);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 1.5rem;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--cream);
+    border-radius: 16px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 1.75rem;
+  }
+
+  .modal h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0 0 1.25rem;
+  }
+
+  .field { margin-bottom: 14px; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--charcoal);
+    margin-bottom: 5px;
+  }
+
+  .field input, .field textarea {
+    width: 100%;
+    font-family: 'Archivo', sans-serif;
+    font-size: 14px;
+    padding: 9px 11px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--charcoal);
+  }
+
+  .field textarea { resize: vertical; min-height: 70px; }
+
+  .field-hint {
+    font-size: 11px;
+    color: #8a8278;
+    margin-top: 4px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+  }
+
+  .modal-actions button { flex: 1; }
+
+  .status-msg {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 10px;
+    min-height: 16px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--mustard);
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand-title">Shit By Wes</div>
+    <div class="brand-sub">character system — living archive</div>
+  </header>
+
+  <div class="philosophy">
+    Three rodeo clowns. <b>Wacky and wild on the surface</b> — their entire purpose is to protect you and pick you up when you're down. In a real rodeo, clowns distract the bull and make the crowd laugh so the fear doesn't become unbearable. Nameless, gender ambiguous archetypes — anyone can see themselves or someone they love in them. <b>Unified illustration style:</b> heavy confident ink outlines, painted color fill with ink shading, weathered patched fabric texture, grounded warm human expression. Pose, palette, and costume detail are what separate each character — not the rendering technique.
+  </div>
+
+  <div class="toolbar">
+    <h2>The roster</h2>
+    <button class="primary" id="add-btn">+ add character</button>
+  </div>
+
+  <div id="grid" class="grid"><div class="empty-state">No characters yet — add your first one</div><div class="add-card" id="inline-add">+ add character</div></div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">Add a character</h3>
+    <div class="field">
+      <label>Name / archetype title</label>
+      <input type="text" id="f-name" placeholder="e.g. The Instigator">
+    </div>
+    <div class="field">
+      <label>Three-word summary</label>
+      <input type="text" id="f-archetype" placeholder="e.g. Chaotic. Kinetic. Unstoppable.">
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea id="f-desc" placeholder="Who are they, what&#39;s their role, what makes them distinct..."></textarea>
+    </div>
+    <div class="field">
+      <label>Personality traits (comma separated)</label>
+      <input type="text" id="f-traits" placeholder="e.g. Energy 9/10, Courage 10/10, Warmth 8/10">
+      <div class="field-hint">Shown as small tags on the card</div>
+    </div>
+    <div class="field">
+      <label>Reference image URL (optional)</label>
+      <input type="text" id="f-image" placeholder="https://...">
+      <div class="field-hint">Paste a link to an image hosted online — Imgur, Google Drive (public), your own site, etc. Storage here is text-only, so the image itself has to live somewhere else.</div>
+    </div>
+    <div class="modal-actions">
+      <button id="cancel-btn">Cancel</button>
+      <button class="primary" id="save-btn">Save character</button>
+    </div>
+    <div class="status-msg" id="status-msg"></div>
+  </div>
+</div>
+
+<script>
+let characters = [];
+let editingId = null;
+
+function uid() {
+  return 'char_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+}
+
+async function loadCharacters() {
+  try {
+    const result = await window.storage.get('sbw-characters', false);
+    characters = result && result.value ? JSON.parse(result.value) : [];
+  } catch (e) {
+    characters = [];
+  }
+  render();
+}
+
+async function saveCharacters() {
+  try {
+    await window.storage.set('sbw-characters', JSON.stringify(characters), false);
+  } catch (e) {
+    showStatus('Could not save — try again.', true);
+  }
+}
+
+function showStatus(msg, isError) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.style.color = isError ? '#a32d2d' : '#3b6d11';
+  setTimeout(() => { el.textContent = ''; }, 2500);
+}
+
+function render() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  if (characters.length === 0) {
+    grid.innerHTML = '<div class="empty-state">No characters yet — add your first one</div>';
+  }
+
+  characters.forEach(function(c) {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const imgHtml = c.image
+      ? '<img src="' + escapeAttr(c.image) + '" alt="" onerror="this.parentElement.classList.add(\'empty\');this.remove();this.parentElement.innerHTML=\'image failed to load\'">'
+      : '';
+
+    const traitTags = (c.traits || '')
+      .split(',')
+      .map(function(t) { return t.trim(); })
+      .filter(Boolean)
+      .map(function(t) { return '<span class="trait-tag">' + escapeHtml(t) + '</span>'; })
+      .join('');
+
+    card.innerHTML =
+      '<div class="card-img' + (c.image ? '' : ' empty') + '">' +
+        (c.image ? imgHtml : 'no reference image yet') +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div class="card-num">character</div>' +
+        '<div class="card-name">' + escapeHtml(c.name || 'Untitled') + '</div>' +
+        (c.archetype ? '<div class="card-archetype">' + escapeHtml(c.archetype) + '</div>' : '') +
+        (c.desc ? '<div class="card-desc">' + escapeHtml(c.desc) + '</div>' : '') +
+        (traitTags ? '<div class="traits">' + traitTags + '</div>' : '') +
+        '<div class="card-actions">' +
+          '<button data-edit="' + c.id + '">edit</button>' +
+          '<button class="danger" data-del="' + c.id + '">delete</button>' +
+        '</div>' +
+      '</div>';
+
+    grid.appendChild(card);
+  });
+
+  const addCard = document.createElement('div');
+  addCard.className = 'add-card';
+  addCard.id = 'inline-add';
+  addCard.textContent = '+ add character';
+  grid.appendChild(addCard);
+
+  grid.querySelectorAll('[data-edit]').forEach(function(btn) {
+    btn.addEventListener('click', function() { openModal(btn.getAttribute('data-edit')); });
+  });
+  grid.querySelectorAll('[data-del]').forEach(function(btn) {
+    btn.addEventListener('click', function() { deleteCharacter(btn.getAttribute('data-del')); });
+  });
+  document.getElementById('inline-add').addEventListener('click', function() { openModal(null); });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function escapeAttr(str) {
+  return String(str).replace(/"/g, '&quot;');
+}
+
+function openModal(id) {
+  editingId = id;
+  const overlay = document.getElementById('modal-overlay');
+  const title = document.getElementById('modal-title');
+
+  if (id) {
+    const c = characters.find(function(x) { return x.id === id; });
+    title.textContent = 'Edit character';
+    document.getElementById('f-name').value = c.name || '';
+    document.getElementById('f-archetype').value = c.archetype || '';
+    document.getElementById('f-desc').value = c.desc || '';
+    document.getElementById('f-traits').value = c.traits || '';
+    document.getElementById('f-image').value = c.image || '';
+  } else {
+    title.textContent = 'Add a character';
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-archetype').value = '';
+    document.getElementById('f-desc').value = '';
+    document.getElementById('f-traits').value = '';
+    document.getElementById('f-image').value = '';
+  }
+
+  overlay.classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingId = null;
+}
+
+async function deleteCharacter(id) {
+  characters = characters.filter(function(c) { return c.id !== id; });
+  await saveCharacters();
+  render();
+}
+
+document.getElementById('add-btn').addEventListener('click', function() { openModal(null); });
+document.getElementById('cancel-btn').addEventListener('click', closeModal);
+
+document.getElementById('save-btn').addEventListener('click', async function() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) {
+    showStatus('Give your character a name first.', true);
+    return;
+  }
+
+  const data = {
+    id: editingId || uid(),
+    name: name,
+    archetype: document.getElementById('f-archetype').value.trim(),
+    desc: document.getElementById('f-desc').value.trim(),
+    traits: document.getElementById('f-traits').value.trim(),
+    image: document.getElementById('f-image').value.trim()
+  };
+
+  if (editingId) {
+    characters = characters.map(function(c) { return c.id === editingId ? data : c; });
+  } else {
+    characters.push(data);
+  }
+
+  await saveCharacters();
+  closeModal();
+  render();
+});
+
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+loadCharacters();
+</script>
+
+
+</body></html>
